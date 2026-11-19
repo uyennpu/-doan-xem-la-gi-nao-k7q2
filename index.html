@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Đoán xem là gì nàoo?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Ý tưởng: nền xanh rêu đậm, phong thư hồng pastel, giấy kem, dấu sáp hồng đất, băng keo pastel.
+     Bốn cảnh dọc cho điện thoại: phong thư -> thư -> ảnh Polaroid -> nhạc. */
+  --moss:#4b5736;
+  --moss-2:#6b7a52;
+  --pink:#f6cdd3;
+  --pink-deep:#e8a9b5;
+  --cream:#fff8ec;
+  --ink:#4a3446;
+  --seal:#d4607a;
+  --mint:#bfe3cf;
+  --butter:#fbe7a8;
+  --lilac:#d9cdf0;
+  --font-hand:'Crimson Pro',Georgia,'Times New Roman',serif;
+  --font-ui:'Crimson Pro',Georgia,'Times New Roman',serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:
+    radial-gradient(120% 90% at 50% 40%, rgba(0,0,0,0) 45%, rgba(24,32,14,.38) 100%),
+    url('bg.jpg') 0 0/576px auto repeat;
+  background-color:#66724e;
+  color:var(--cream);
+  font-family:var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.scene{
+  position:fixed;inset:0;display:none;flex-direction:column;align-items:center;
+  overflow-y:auto;padding:28px 16px;
+}
+.scene.active{display:flex;animation:fadeUp .7s ease both}
+.inner{margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:22px;width:100%}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+h1,h2{font-family:var(--font-hand);font-weight:500;margin:0;text-wrap:balance;text-align:center}
+h1{font-size:34px;line-height:1.2;color:var(--cream)}
+h2{font-size:30px;line-height:1.2;color:var(--cream)}
+.kicker{font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--mint);margin:0;text-align:center}
+.hint{font-size:17px;color:rgba(255,248,236,.72);margin:0;text-align:center}
+
+.btn{
+  font:600 18px/1 var(--font-ui);color:var(--ink);background:var(--butter);
+  border:0;border-radius:999px;padding:14px 26px;cursor:pointer;
+  box-shadow:0 6px 0 #d9c27a, 0 14px 24px rgba(0,0,0,.28);
+  transition:transform .15s, box-shadow .15s;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #d9c27a, 0 8px 16px rgba(0,0,0,.28)}
+.btn.ghost{background:transparent;color:var(--cream);box-shadow:none;border:1px solid rgba(255,248,236,.4);padding:10px 18px;font-size:16px;font-weight:500}
+button:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+
+/* ---------- Cảnh 1: phong thư ---------- */
+.opening h1,.opening .kicker{opacity:0;transition:opacity .6s}
+.env-wrap{perspective:1200px;width:min(86vw,360px);margin-top:34px}
+.env{position:relative;width:100%;aspect-ratio:3/2}
+.env-back{position:absolute;inset:0;border-radius:10px;background:var(--pink-deep);box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.peek{
+  position:absolute;left:7%;right:7%;top:9%;bottom:7%;z-index:1;border-radius:5px;
+  background:var(--cream);padding:14px 16px;color:var(--ink);
+  font-family:var(--font-hand);font-size:22px;
+  transition:transform 1.1s cubic-bezier(.2,.8,.2,1) .55s;
+}
+.env.open .peek{transform:translateY(-62%)}
+.env-front{
+  position:absolute;inset:0;z-index:2;border-radius:10px;
+  background:linear-gradient(165deg,#fadbe0,var(--pink) 55%,#efbac4);
+  clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%);
+}
+.flap{
+  position:absolute;left:0;right:0;top:0;height:54%;z-index:4;transform-origin:top center;
+  background:linear-gradient(180deg,#f3bfc9,var(--pink));
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:transform .9s ease, z-index 0s .42s;
+}
+.env.open .flap{transform:rotateX(180deg);z-index:0;background:linear-gradient(0deg,#f3bfc9,#e8a9b5)}
+.seal{
+  position:absolute;z-index:5;left:50%;top:54%;width:84px;height:84px;margin:-42px 0 0 -42px;
+  border:0;padding:0;background:none;cursor:pointer;
+  filter:drop-shadow(0 5px 6px rgba(30,4,10,.45));
+  animation:pulse 2.4s ease-in-out infinite;
+  transition:transform .5s, opacity .5s;
+}
+.seal svg{display:block;width:100%;height:100%}
+.seal.pop{transform:scale(1.35) rotate(14deg);opacity:0;animation:none;pointer-events:none}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+/* ---------- Cảnh 2: thư ---------- */
+.paper{
+  width:min(92vw,430px);max-height:72dvh;overflow-y:auto;border-radius:6px;
+  background-color:var(--cream);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 37px,rgba(212,150,166,.35) 37px 38px);
+  background-attachment:local;background-position:0 14px;
+  padding:14px 24px 14px;color:var(--ink);
+  font-family:var(--font-hand);font-size:23px;line-height:38px;
+  box-shadow:0 24px 50px rgba(0,0,0,.4);position:relative;
+}
+.paper p{margin:0 0 38px}
+.paper p:last-child{margin-bottom:0}
+.paper .greet{font-size:28px;font-weight:600}
+.paper .sign{text-align:right}
+.ch{opacity:0;transition:opacity .3s}
+.ch.on{opacity:1}
+.tape{position:absolute;top:-12px;left:50%;width:96px;height:26px;margin-left:-48px;background:rgba(191,227,207,.85);transform:rotate(-3deg);z-index:2}
+.actions{display:flex;gap:12px;align-items:center;min-height:50px}
+
+/* ---------- Cảnh 3: ảnh ---------- */
+.pols{display:grid;grid-template-columns:1fr 1fr;gap:26px 18px;width:min(90vw,400px);padding:6px 4px}
+.pol{
+  position:relative;background:#fff;padding:8px 8px 30px;cursor:pointer;
+  box-shadow:0 12px 26px rgba(0,0,0,.4);
+  transform:rotate(var(--r));transition:transform .3s, z-index 0s;
+  animation:drop .8s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:var(--d);
+}
+.pol::before{
+  content:"";position:absolute;top:-10px;left:50%;width:54px;height:20px;margin-left:-27px;
+  background:var(--tape);opacity:.9;transform:rotate(var(--tr,-4deg));
+}
+.pol .ph{position:relative;aspect-ratio:1/1;overflow:hidden;background:#efe9e4}
+.pol .pic{position:absolute;inset:0;display:grid;place-items:center;text-align:center;
+  background:linear-gradient(135deg,var(--pink),var(--lilac));color:#7b5f86;font:500 15px var(--font-ui);
+  transition:filter 2.6s ease, opacity 2.6s ease}
+.pol img.pic{width:100%;height:100%;object-fit:cover;display:block;background:none}
+.pol.raw .pic{filter:grayscale(1) brightness(1.7) contrast(.45) blur(9px);opacity:.35}
+.pol .dev{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:10px;
+  font:600 17px/1.25 var(--font-ui);color:#6e5a66;transition:opacity .5s;pointer-events:none}
+.pol:not(.raw) .dev{opacity:0}
+@keyframes drop{from{opacity:0;transform:translateY(-60px) rotate(calc(var(--r) * 3))}to{opacity:1;transform:rotate(var(--r))}}
+
+/* ---------- Mở ảnh ---------- */
+.lb{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  padding:20px 16px;background:rgba(22,30,14,.88);animation:fadeUp .4s ease both;overflow-y:auto}
+.lb[hidden]{display:none}
+.lb-card{background:#fff;padding:10px 10px 40px;box-shadow:0 20px 50px rgba(0,0,0,.5);transform:rotate(-2deg);max-width:min(86vw,400px);position:relative}
+.lb-card::before{content:"";position:absolute;top:-11px;left:50%;width:62px;height:22px;margin-left:-31px;background:var(--butter);opacity:.9;transform:rotate(3deg)}
+.lb-card img{display:block;max-width:100%;max-height:52dvh;margin:0 auto;transition:filter 2.6s ease, opacity 2.6s ease}
+.lb-card img.raw{filter:grayscale(1) brightness(1.7) contrast(.45) blur(10px);opacity:.35}
+.lb-cap{font-size:23px;line-height:1.3;text-align:center;max-width:min(86vw,380px);margin:0;opacity:0;transition:opacity 1.1s;text-wrap:balance;color:var(--cream)}
+.lb-cap.on{opacity:1}
+
+/* ---------- Cảnh 4: nhạc ---------- */
+.disc{
+  width:min(62vw,230px);aspect-ratio:1/1;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle,transparent 0 31%,rgba(255,255,255,.07) 31.5% 32%,transparent 32.5% 44%,rgba(255,255,255,.06) 44.5% 45%,transparent 45.5% 58%,rgba(255,255,255,.06) 58.5% 59%,transparent 59.5%),
+    #1a1420;
+  box-shadow:0 24px 50px rgba(0,0,0,.5);
+  display:grid;place-items:center;
+  animation:spin 7s linear infinite;animation-play-state:paused;
+}
+.disc.spin{animation-play-state:running}
+.disc .label{width:36%;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f9c3cd,var(--pink-deep));display:grid;place-items:center}
+.disc .label svg{width:34%;fill:var(--seal)}
+.disc .label::after{content:"";position:absolute;width:6%;aspect-ratio:1/1;border-radius:50%;background:var(--moss)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.song{text-align:center}
+.song b{display:block;font-family:var(--font-hand);font-size:32px;font-weight:600;line-height:1.1;color:var(--butter)}
+.song span{font-size:17px;color:rgba(255,248,236,.75)}
+.play{
+  width:64px;height:64px;border-radius:50%;border:0;cursor:pointer;background:var(--mint);color:var(--moss);
+  display:grid;place-items:center;box-shadow:0 6px 0 #8fc2a8,0 14px 24px rgba(0,0,0,.3);
+}
+.play svg{width:26px;height:26px;fill:currentColor}
+.play .i-pause{display:none}
+.play.on .i-play{display:none}
+.play.on .i-pause{display:block}
+.final{font-family:var(--font-hand);font-size:30px;font-weight:500;text-align:center;color:var(--cream);margin:0;line-height:1.25;text-wrap:balance}
+.note{font-size:14px;color:rgba(255,248,236,.55);text-align:center;margin:0;max-width:300px;min-height:1em}
+
+@media (prefers-reduced-motion:reduce){
+  .scene.active{animation:none}
+  .seal,.disc{animation:none}
+  .pol{animation:none}
+  .peek,.flap{transition-duration:.01s;transition-delay:0s}
+}
+</style>
+</head>
+<body>
+
+<!-- Cảnh 1: phong thư -->
+<section class="scene active" id="s1" aria-label="Phong thư">
+  <div class="inner">
+    <p class="kicker">19 . 11</p>
+    <h1>Cốc cốc cốc,<br>mở cửa cho em đê!!!</h1>
+    <div class="env-wrap">
+      <div class="env" id="env">
+        <div class="env-back"></div>
+        <div class="peek" aria-hidden="true">Dear anh iuuuuu,</div>
+        <div class="env-front"></div>
+        <div class="flap"></div>
+        <button class="seal" id="seal" aria-label="Chạm để mở thư">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+<defs>
+<radialGradient id="wax" cx="35%" cy="28%" r="85%"><stop offset="0" stop-color="#b0344a"/><stop offset=".5" stop-color="#7d1828"/><stop offset="1" stop-color="#4a0a16"/></radialGradient>
+<radialGradient id="face" cx="40%" cy="32%" r="80%"><stop offset="0" stop-color="#8f2336"/><stop offset="1" stop-color="#6a1222"/></radialGradient>
+<linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e48a9b" stop-opacity=".55"/><stop offset=".5" stop-color="#e48a9b" stop-opacity="0"/><stop offset="1" stop-color="#1f0207" stop-opacity=".6"/></linearGradient>
+<filter id="emb" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="-.7" dy="-.7" stdDeviation=".35" flood-color="#e58a9c" flood-opacity=".45" result="a"/><feDropShadow in="a" dx=".9" dy="1" stdDeviation=".55" flood-color="#25030a" flood-opacity=".8"/></filter>
+</defs>
+<path d="M112.82,60.00 L113.30,61.49 L113.48,63.00 L113.33,64.49 L112.86,65.94 L112.10,67.34 L111.13,68.67 L110.02,69.93 L108.88,71.14 L107.81,72.31 L106.86,73.48 L106.10,74.68 L105.55,75.93 L105.18,77.24 L104.94,78.61 L104.78,80.04 L104.60,81.49 L104.32,82.92 L103.89,84.29 L103.24,85.56 L102.38,86.69 L101.29,87.67 L100.03,88.50 L98.64,89.20 L97.19,89.80 L95.73,90.34 L94.33,90.88 L93.03,91.45 L91.83,92.09 L90.73,92.82 L89.73,93.62 L88.78,94.50 L87.87,95.42 L86.95,96.35 L86.01,97.27 L85.03,98.17 L84.02,99.03 L82.98,99.87 L81.93,100.72 L80.88,101.61 L79.84,102.58 L78.82,103.65 L77.81,104.83 L76.79,106.12 L75.74,107.47 L74.63,108.84 L73.45,110.13 L72.17,111.27 L70.79,112.17 L69.32,112.75 L67.77,112.99 L66.19,112.85 L64.59,112.36 L63.01,111.59 L61.48,110.61 L60.00,109.53 L58.59,108.44 L57.23,107.45 L55.91,106.63 L54.61,106.02 L53.31,105.63 L51.98,105.44 L50.62,105.39 L49.23,105.41 L47.82,105.42 L46.41,105.35 L45.03,105.14 L43.70,104.77 L42.44,104.21 L41.24,103.50 L40.12,102.67 L39.05,101.76 L38.01,100.84 L36.98,99.95 L35.93,99.12 L34.84,98.36 L33.71,97.68 L32.53,97.05 L31.33,96.44 L30.12,95.81 L28.94,95.13 L27.80,94.38 L26.72,93.56 L25.70,92.66 L24.73,91.72 L23.77,90.77 L22.79,89.82 L21.74,88.91 L20.58,88.06 L19.31,87.27 L17.90,86.52 L16.38,85.78 L14.81,85.01 L13.26,84.17 L11.80,83.22 L10.55,82.13 L9.56,80.89 L8.92,79.49 L8.64,77.96 L8.74,76.32 L9.17,74.63 L9.87,72.91 L10.73,71.23 L11.67,69.60 L12.56,68.05 L13.33,66.58 L13.90,65.18 L14.26,63.85 L14.40,62.56 L14.35,61.28 L14.17,60.00 L13.92,58.71 L13.68,57.40 L13.50,56.09 L13.43,54.76 L13.48,53.44 L13.64,52.14 L13.88,50.84 L14.18,49.56 L14.49,48.28 L14.76,46.98 L14.99,45.67 L15.17,44.32 L15.30,42.95 L15.44,41.54 L15.61,40.13 L15.86,38.73 L16.23,37.37 L16.76,36.07 L17.44,34.85 L18.26,33.71 L19.19,32.65 L20.17,31.64 L21.16,30.65 L22.09,29.62 L22.94,28.53 L23.68,27.33 L24.32,26.02 L24.87,24.58 L25.39,23.05 L25.94,21.48 L26.57,19.94 L27.35,18.50 L28.31,17.26 L29.49,16.27 L30.87,15.58 L32.45,15.22 L34.16,15.17 L35.97,15.38 L37.82,15.79 L39.64,16.30 L41.39,16.84 L43.04,17.31 L44.58,17.65 L46.01,17.81 L47.35,17.78 L48.62,17.57 L49.85,17.22 L51.06,16.77 L52.28,16.29 L53.52,15.81 L54.77,15.37 L56.06,14.99 L57.36,14.68 L58.67,14.39 L60.00,14.12 L61.35,13.83 L62.71,13.49 L64.11,13.09 L65.55,12.64 L67.02,12.16 L68.53,11.72 L70.06,11.35 L71.60,11.13 L73.12,11.10 L74.59,11.30 L76.00,11.75 L77.32,12.43 L78.55,13.30 L79.71,14.29 L80.81,15.33 L81.90,16.35 L83.00,17.29 L84.16,18.08 L85.40,18.72 L86.75,19.21 L88.20,19.59 L89.72,19.91 L91.27,20.26 L92.79,20.70 L94.22,21.30 L95.49,22.11 L96.55,23.15 L97.37,24.41 L97.94,25.88 L98.28,27.50 L98.43,29.20 L98.47,30.93 L98.44,32.63 L98.44,34.24 L98.51,35.75 L98.71,37.13 L99.04,38.39 L99.52,39.57 L100.11,40.67 L100.80,41.74 L101.52,42.80 L102.25,43.88 L102.97,44.98 L103.66,46.10 L104.32,47.25 L104.98,48.41 L105.67,49.59 L106.42,50.78 L107.25,51.99 L108.17,53.21 L109.16,54.47 L110.18,55.78 L111.18,57.13 L112.09,58.54Z" fill="url(#wax)"/>
+<path d="M112.82,60.00 L113.30,61.49 L113.48,63.00 L113.33,64.49 L112.86,65.94 L112.10,67.34 L111.13,68.67 L110.02,69.93 L108.88,71.14 L107.81,72.31 L106.86,73.48 L106.10,74.68 L105.55,75.93 L105.18,77.24 L104.94,78.61 L104.78,80.04 L104.60,81.49 L104.32,82.92 L103.89,84.29 L103.24,85.56 L102.38,86.69 L101.29,87.67 L100.03,88.50 L98.64,89.20 L97.19,89.80 L95.73,90.34 L94.33,90.88 L93.03,91.45 L91.83,92.09 L90.73,92.82 L89.73,93.62 L88.78,94.50 L87.87,95.42 L86.95,96.35 L86.01,97.27 L85.03,98.17 L84.02,99.03 L82.98,99.87 L81.93,100.72 L80.88,101.61 L79.84,102.58 L78.82,103.65 L77.81,104.83 L76.79,106.12 L75.74,107.47 L74.63,108.84 L73.45,110.13 L72.17,111.27 L70.79,112.17 L69.32,112.75 L67.77,112.99 L66.19,112.85 L64.59,112.36 L63.01,111.59 L61.48,110.61 L60.00,109.53 L58.59,108.44 L57.23,107.45 L55.91,106.63 L54.61,106.02 L53.31,105.63 L51.98,105.44 L50.62,105.39 L49.23,105.41 L47.82,105.42 L46.41,105.35 L45.03,105.14 L43.70,104.77 L42.44,104.21 L41.24,103.50 L40.12,102.67 L39.05,101.76 L38.01,100.84 L36.98,99.95 L35.93,99.12 L34.84,98.36 L33.71,97.68 L32.53,97.05 L31.33,96.44 L30.12,95.81 L28.94,95.13 L27.80,94.38 L26.72,93.56 L25.70,92.66 L24.73,91.72 L23.77,90.77 L22.79,89.82 L21.74,88.91 L20.58,88.06 L19.31,87.27 L17.90,86.52 L16.38,85.78 L14.81,85.01 L13.26,84.17 L11.80,83.22 L10.55,82.13 L9.56,80.89 L8.92,79.49 L8.64,77.96 L8.74,76.32 L9.17,74.63 L9.87,72.91 L10.73,71.23 L11.67,69.60 L12.56,68.05 L13.33,66.58 L13.90,65.18 L14.26,63.85 L14.40,62.56 L14.35,61.28 L14.17,60.00 L13.92,58.71 L13.68,57.40 L13.50,56.09 L13.43,54.76 L13.48,53.44 L13.64,52.14 L13.88,50.84 L14.18,49.56 L14.49,48.28 L14.76,46.98 L14.99,45.67 L15.17,44.32 L15.30,42.95 L15.44,41.54 L15.61,40.13 L15.86,38.73 L16.23,37.37 L16.76,36.07 L17.44,34.85 L18.26,33.71 L19.19,32.65 L20.17,31.64 L21.16,30.65 L22.09,29.62 L22.94,28.53 L23.68,27.33 L24.32,26.02 L24.87,24.58 L25.39,23.05 L25.94,21.48 L26.57,19.94 L27.35,18.50 L28.31,17.26 L29.49,16.27 L30.87,15.58 L32.45,15.22 L34.16,15.17 L35.97,15.38 L37.82,15.79 L39.64,16.30 L41.39,16.84 L43.04,17.31 L44.58,17.65 L46.01,17.81 L47.35,17.78 L48.62,17.57 L49.85,17.22 L51.06,16.77 L52.28,16.29 L53.52,15.81 L54.77,15.37 L56.06,14.99 L57.36,14.68 L58.67,14.39 L60.00,14.12 L61.35,13.83 L62.71,13.49 L64.11,13.09 L65.55,12.64 L67.02,12.16 L68.53,11.72 L70.06,11.35 L71.60,11.13 L73.12,11.10 L74.59,11.30 L76.00,11.75 L77.32,12.43 L78.55,13.30 L79.71,14.29 L80.81,15.33 L81.90,16.35 L83.00,17.29 L84.16,18.08 L85.40,18.72 L86.75,19.21 L88.20,19.59 L89.72,19.91 L91.27,20.26 L92.79,20.70 L94.22,21.30 L95.49,22.11 L96.55,23.15 L97.37,24.41 L97.94,25.88 L98.28,27.50 L98.43,29.20 L98.47,30.93 L98.44,32.63 L98.44,34.24 L98.51,35.75 L98.71,37.13 L99.04,38.39 L99.52,39.57 L100.11,40.67 L100.80,41.74 L101.52,42.80 L102.25,43.88 L102.97,44.98 L103.66,46.10 L104.32,47.25 L104.98,48.41 L105.67,49.59 L106.42,50.78 L107.25,51.99 L108.17,53.21 L109.16,54.47 L110.18,55.78 L111.18,57.13 L112.09,58.54Z" fill="none" stroke="url(#rim)" stroke-width="1.6"/>
+<circle cx="60" cy="60" r="37" fill="url(#face)"/>
+<circle cx="60" cy="60" r="37" fill="none" stroke="#3d0711" stroke-width="2.2" opacity=".85"/>
+<circle cx="60" cy="60" r="35.2" fill="none" stroke="#c46277" stroke-width=".8" opacity=".35"/>
+<g filter="url(#emb)">
+ <path d="M59.5 64 C59 74 58 82 56 92" fill="none" stroke="#5d1120" stroke-width="2.4" stroke-linecap="round"/>
+ <path d="M58.5 82 C66 79 72 74 75 68 C70 68 63 72 58.5 82Z" fill="#7b1c2d" stroke="#4a0b17" stroke-width=".8"/>
+ <path d="M58 86 C52 83 47 80 44 75 C50 75 55 79 58 86Z" fill="#7b1c2d" stroke="#4a0b17" stroke-width=".8"/>
+ <g transform="translate(59 50) rotate(-12)">
+  <g fill="#8c2134" stroke="#4e0d19" stroke-width=".9"><ellipse cx="0" cy="-10" rx="10.5" ry="11.5" transform="rotate(0)"/><ellipse cx="0" cy="-10" rx="10.5" ry="11.5" transform="rotate(72)"/><ellipse cx="0" cy="-10" rx="10.5" ry="11.5" transform="rotate(144)"/><ellipse cx="0" cy="-10" rx="10.5" ry="11.5" transform="rotate(216)"/><ellipse cx="0" cy="-10" rx="10.5" ry="11.5" transform="rotate(288)"/></g>
+  <g fill="none" stroke="#c0586b" stroke-width=".6" opacity=".5" stroke-linecap="round"><path d="M0 -6 L0 -17" transform="rotate(36)"/><path d="M0 -6 L0 -17" transform="rotate(108)"/><path d="M0 -6 L0 -17" transform="rotate(180)"/><path d="M0 -6 L0 -17" transform="rotate(252)"/><path d="M0 -6 L0 -17" transform="rotate(324)"/></g>
+  <circle r="6" fill="#5a0f1d" stroke="#3a0711" stroke-width=".8"/>
+  <g fill="#b04a5d"><circle cx="0" cy="-8.2" r=".9" transform="rotate(0)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(40)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(80)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(120)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(160)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(200)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(240)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(280)"/><circle cx="0" cy="-8.2" r=".9" transform="rotate(320)"/></g>
+ </g>
+</g>
+<ellipse cx="38" cy="30" rx="16" ry="8" fill="#fff" opacity=".06" transform="rotate(-35 38 30)"/>
+</svg>
+        </button>
+      </div>
+    </div>
+    <p class="hint" id="hint1">Chạm vào dấu sáp để mở</p>
+  </div>
+</section>
+
+<!-- Cảnh 2: thư -->
+<section class="scene" id="s2" aria-label="Lá thư">
+  <div class="inner">
+    <div class="paper" id="paper"><div class="tape"></div><div id="typed" aria-live="polite"></div></div>
+    <div class="actions">
+      <button class="btn ghost" id="skip">Đọc nhanh</button>
+      <button class="btn" id="to3" hidden>Xem ảnh của tụi mình</button>
+    </div>
+  </div>
+</section>
+
+<!-- Cảnh 3: ảnh -->
+<section class="scene" id="s3" aria-label="Ảnh kỷ niệm">
+  <div class="inner">
+    <h2>Mấy khoảnh khắc<br>của tụi mình</h2>
+    <div class="pols" id="pols"></div>
+    <p class="hint" id="hint3">Chạm vào từng tấm để mở ảnh</p>
+    <button class="btn" id="to4" hidden>Còn một điều nữa</button>
+  </div>
+</section>
+
+<!-- Cảnh 4: nhạc -->
+<section class="scene" id="s4" aria-label="Bài hát">
+  <div class="inner">
+    <p class="kicker">Bài này em để dành cho anh</p>
+    <div class="disc" id="disc"><div class="label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2.1 0 3.6 1.1 4.6 2.6.4.6 1.4.6 1.8 0C13.4 6.1 14.9 5 17 5c3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div></div>
+    <div class="song"><b>Viên đá nhỏ</b><span>Nghe cùng em nhé</span></div>
+    <button class="play" id="play" aria-label="Phát hoặc dừng nhạc">
+      <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+    </button>
+    <p class="final">Chúc mừng 19/11,<br>anh iuuuuu của em</p>
+    <p class="note" id="note"></p>
+  </div>
+</section>
+
+<div class="lb" id="lb" hidden>
+  <div class="lb-card"><img id="lbImg" alt=""></div>
+  <p class="lb-cap" id="lbCap"></p>
+  <button class="btn ghost" id="lbClose">Đóng</button>
+</div>
+
+<script>
+/* ====== NỘI DUNG: sửa ở đây ====== */
+// Thư của Uyên.
+const LETTER = [
+  { cls:'greet', text:'Dear anh iuuuuu,' },
+  { text:'Năm rùi em hỏi anh có biết ngày quốc tế nam giới hong, anh bảo "làm gì có ngày đó" kk. Năm nay em cũng hơi ngại, sợ chúc hay tặng quà gì lại thấy kỳ hehe. Nhưng năm nay anh cũm biết ngày này, nên em vẫn muốn làm gì đó cho anh, z là em loay hoay cả ngày để làm web này, hơi sơ xài một xúuu thôi, mong anh thích nhe. Còn quà thì bí mật nhe kk.' },
+  { text:'Cảm ơn anh vì đã luôn yêu thương, quan tâm, chiều chuộng và đã ngày càng mở lòng với em nhiều hơn. Em mong anh sẽ luôn cảm thấy vui vẻ, thoải mái khi ở cạnh em và tụi mình sẽ luôn là người có thể chia sẻ mọi điều với nhau.' },
+  { text:'Hôm nay 19/11, em chúc anh thật nhiều sức khỏe và những ngày bình yên. Chúc anh sớm gặp được công việc xứng đáng với sự cố gắng của anh, để mỗi ngày đi làm về anh đều thấy nhẹ lòng. Mong là Văn Linh sẽ ngày càng iuu em hơn, luôn vui vẻ và đồng hành cùng nhau thật lâu anh nhen' },
+  { text:'Yêu anh nhìuuuu ❤️' },
+  { cls:'sign', text:'Phương Uyên iu iu' }
+];
+
+// Ảnh + câu hiện ra khi mở ảnh.
+const PHOTOS = [
+  { src:'p1.jpg', cap:'Đây là chuyến đi đầu tiên tụi mình đi chơi chung. Em thấy vui lắm, và em mong có thật nhiều chuyến đi nữaaaa 🥰', tape:'var(--mint)',  r:'-4deg', tr:'-5deg' },
+  { src:'p2.jpg', cap:'Không biết nữa, nhưng em luôn thích những lúc anh tập trung và nghiêm túc, như lúc đọc sách, và cả trong tấm ảnh này nè', tape:'var(--butter)', r:'3deg',  tr:'4deg' },
+  { src:'p3.jpg', cap:'Em thích sô-cô-la, thích được anh xoa bụng và cũng thích được ở gần anhh', tape:'var(--lilac)', r:'2deg',  tr:'-3deg' },
+  { src:'p4.jpg', cap:'Anh thích tấm ảnh này, em cũng thích lắm. Mốt phải chụp làm hết dung lượng điện thoại luôn nhen kk', tape:'var(--pink-deep)', r:'-3deg', tr:'5deg' }
+];
+
+// Nhạc: music.mp3 (Viên đá nhỏ) chỉ phát khi bấm nút ở cảnh cuối.
+/* ================================== */
+
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function go(n){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  $('s'+n).classList.add('active');
+  $('s'+n).scrollTop = 0;
+}
+
+/* ---- Cảnh 1: mở phong thư ---- */
+let opened = false;
+$('seal').addEventListener('click', () => {
+  if (opened) return; opened = true;
+  $('seal').classList.add('pop');
+  $('hint1').style.visibility = 'hidden';
+  $('s1').classList.add('opening');
+  $('env').classList.add('open');
+  setTimeout(() => { go(2); typeLetter(); }, reduce ? 300 : 2100);
+});
+
+/* ---- Cảnh 2: chữ hiện dần ---- */
+let typing = null, chars = [];
+function buildLetter(){
+  const box = $('typed'); box.innerHTML = ''; chars = [];
+  LETTER.forEach(p => {
+    const el = document.createElement('p');
+    if (p.cls) el.className = p.cls;
+    const parts = (window.Intl && Intl.Segmenter)
+      ? Array.from(new Intl.Segmenter('vi', { granularity:'grapheme' }).segment(p.text.normalize('NFC')), x => x.segment)
+      : Array.from(p.text.normalize('NFC'));
+    parts.forEach(c => {
+      const s = document.createElement('span');
+      s.className = 'ch'; s.textContent = c; el.appendChild(s); chars.push(s);
+    });
+    box.appendChild(el);
+  });
+}
+function finishLetter(){
+  clearInterval(typing); typing = null;
+  chars.forEach(s => s.classList.add('on'));
+  $('skip').hidden = true; $('to3').hidden = false;
+}
+function typeLetter(){
+  buildLetter();
+  $('skip').hidden = false; $('to3').hidden = true;
+  if (reduce) { finishLetter(); return; }
+  let i = 0;
+  typing = setInterval(() => {
+    if (i >= chars.length) { finishLetter(); return; }
+    chars[i].classList.add('on'); i++;
+    const paper = $('paper'), need = chars[i - 1].offsetTop - paper.clientHeight + 90;
+    if (need > paper.scrollTop) paper.scrollTop = need;
+  }, 17);
+}
+$('skip').addEventListener('click', () => { finishLetter(); $('paper').scrollTop = 0; });
+$('to3').addEventListener('click', () => { go(3); buildPols(); });
+
+/* ---- Cảnh 3: Polaroid + mở ảnh ---- */
+let polsBuilt = false, developed = 0;
+function openLb(i, fresh){
+  const p = PHOTOS[i], img = $('lbImg'), cap = $('lbCap');
+  img.src = p.src; img.alt = 'Ảnh kỷ niệm ' + (i + 1);
+  cap.textContent = p.cap; cap.classList.remove('on');
+  $('lb').hidden = false;
+  if (fresh && !reduce) {
+    img.classList.add('raw');
+    setTimeout(() => img.classList.remove('raw'), 120);
+    setTimeout(() => cap.classList.add('on'), 2100);
+  } else {
+    img.classList.remove('raw'); cap.classList.add('on');
+  }
+}
+function closeLb(){
+  $('lb').hidden = true;
+  if (developed === PHOTOS.length) { $('hint3').textContent = 'Chạm vào ảnh để xem lại'; $('to4').hidden = false; }
+}
+$('lbClose').addEventListener('click', closeLb);
+$('lb').addEventListener('click', e => { if (e.target === $('lb')) closeLb(); });
+function buildPols(){
+  if (polsBuilt) return; polsBuilt = true;
+  const wrap = $('pols');
+  PHOTOS.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'pol raw'; d.tabIndex = 0; d.setAttribute('role','button');
+    d.setAttribute('aria-label', 'Mở ảnh ' + (i + 1));
+    d.style.setProperty('--r', p.r); d.style.setProperty('--tr', p.tr);
+    d.style.setProperty('--tape', p.tape); d.style.setProperty('--d', (i * 0.35) + 's');
+    const ph = document.createElement('div'); ph.className = 'ph';
+    const pic = document.createElement('img'); pic.className = 'pic'; pic.src = p.src; pic.alt = '';
+    const dev = document.createElement('div'); dev.className = 'dev'; dev.textContent = 'Chạm để mở ảnh';
+    ph.append(pic, dev); d.append(ph);
+    const open = () => {
+      if (d.classList.contains('raw')) { d.classList.remove('raw'); developed++; openLb(i, true); }
+      else openLb(i, false);
+    };
+    d.addEventListener('click', open);
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    wrap.appendChild(d);
+  });
+}
+$('to4').addEventListener('click', () => go(4));
+
+/* ---- Nhạc: chỉ phát khi bấm nút ở cảnh cuối ---- */
+let song = null;
+function updateUi(){
+  const on = !!(song && !song.paused);
+  $('disc').classList.toggle('spin', on);
+  $('play').classList.toggle('on', on);
+}
+$('play').addEventListener('click', () => {
+  if (!song) { song = new Audio('music.mp3'); song.loop = true; song.preload = 'auto'; }
+  if (!song.paused) { song.pause(); updateUi(); return; }
+  song.play().then(() => { $('note').textContent = ''; updateUi(); })
+    .catch(() => { $('note').textContent = 'Chạm nút phát lần nữa để nghe nhạc nhé.'; });
+});
+$('note').textContent = 'Chạm nút phát để nghe nhạc';
+</script>
+</body>
+</html>
